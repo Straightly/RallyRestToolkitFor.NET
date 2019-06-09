@@ -17,8 +17,18 @@ namespace Rally.RestApi.Test
 	public class RallyRestApiTest
 	{
 		public static RallyRestApi GetRallyRestApi(string userName = "", string password = "",
-			string server = "", string wsapiVersion = "")
+			string server = "", string wsapiVersion = "", string apiKey = "")
 		{
+            var apiKeyString = apiKey;
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                apiKeyString = Settings.Default.ApiKey;
+            }
+
+            if (!string.IsNullOrEmpty(apiKeyString))
+            {
+                return GetRallyRestApiWithApiKey(apiKey: apiKeyString);
+            }
 			if (String.IsNullOrWhiteSpace(userName))
 			{
 				userName = Settings.Default.UserName;
@@ -40,7 +50,7 @@ namespace Rally.RestApi.Test
 			}
 
 			RallyRestApi api = new RallyRestApi(webServiceVersion: wsapiVersion);
-			api.Authenticate(userName, password, server);
+			api.Authenticate(userName, password, server, allowSSO:false);
 			return api;
 		}
 

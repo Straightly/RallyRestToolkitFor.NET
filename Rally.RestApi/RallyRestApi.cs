@@ -1387,7 +1387,12 @@ namespace Rally.RestApi
 																							 | SecurityProtocolType.Tls12;
 				ServicePointManager.Expect100Continue = true;
 				Dictionary<string, string> processedHeaders = GetProcessedHeaders();
-				DynamicJsonObject response = serializer.Deserialize(httpService.Get(uri, processedHeaders));
+                var responseString = httpService.Get(uri, processedHeaders);
+                if(responseString.StartsWith("<html>")) {
+                    throw new RallyUnavailableException(null, responseString);
+                }
+
+                DynamicJsonObject response = serializer.Deserialize(responseString);
 
 				if (retry && response[response.Fields.First()].Errors.Count > 0 && retryCounter < this.maxRetries)
 				{
@@ -1421,12 +1426,20 @@ namespace Rally.RestApi
 		private DynamicJsonObject DoPost(Uri uri, DynamicJsonObject data, bool retry = true, int retryCounter = 1)
 		{
 			int retrySleepTime = 1000;
-			try
-			{
-				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
-				ServicePointManager.Expect100Continue = true;
-				Dictionary<string, string> processedHeaders = GetProcessedHeaders();
-				var response = serializer.Deserialize(httpService.Post(GetSecuredUri(uri), serializer.Serialize(data), processedHeaders));
+            try
+            {
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                ServicePointManager.Expect100Continue = true;
+                Dictionary<string, string> processedHeaders = GetProcessedHeaders();
+                var responseString = httpService.Post(GetSecuredUri(uri), serializer.Serialize(data), processedHeaders);
+
+                if (responseString.StartsWith("<html>"))
+                {
+                    throw new RallyUnavailableException(null, "Rally returned an HTML page" + responseString);
+                }
+            
+
+                var response = serializer.Deserialize(responseString);
 
 				if (retry && response[response.Fields.First()].Errors.Count > 0 && retryCounter < this.maxRetries)
 				{

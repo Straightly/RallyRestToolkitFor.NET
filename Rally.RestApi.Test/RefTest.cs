@@ -51,7 +51,7 @@ namespace Rally.RestApi.Test
 		}
 
 		[TestMethod()]
-		public void ShouldReturnNullRelativeRefs()
+		public void ShouldReturnNullInvalidRelativeRefs()
 		{
 			Assert.IsNull(Ref.GetRelativeRef("blah"), "Not a ref");
 			Assert.IsNull(Ref.GetRelativeRef(""), "Empty ref");
@@ -100,7 +100,7 @@ namespace Rally.RestApi.Test
 		}
 
 		[TestMethod()]
-		public void ShouldReturnNullOidsFromRefs()
+		public void ShouldReturnNullOidsFromInvalidRefs()
 		{
 			Assert.IsNull(Ref.GetOidFromRef("blah"), "Not a ref");
 			Assert.IsNull(Ref.GetOidFromRef(""), "Empty ref");
