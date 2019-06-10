@@ -74,7 +74,7 @@ namespace Rally.RestApi.Test
 			string password = "Just4Rally";
 			// Initialize the REST API. You can specify a web service version if needed in the constructor.
 			RallyRestApi restApi = new RallyRestApi();
-			restApi.Authenticate(username, password, "https://preview.rallydev.com", proxy: null, allowSSO: false);
+			restApi.Authenticate(username, password, "https://preview.rallydev.com/alm/", proxy: null, allowSSO: false);
 
 			//Create an item
 			DynamicJsonObject toCreate = new DynamicJsonObject();
